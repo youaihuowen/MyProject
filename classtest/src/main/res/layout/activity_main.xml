@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/ll_container"
+    tools:context=".animation.MainActivity">
+
+    <Button
+        android:id="@+id/btn_main_property"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="属性动画" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="补间动画"
+        android:id="@+id/btn_main_view" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="帧动画"
+        android:id="@+id/btn_main_frame" />
+    <Button
+        android:id="@+id/btn_main_transition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="过度动画"/>
+</LinearLayout>
