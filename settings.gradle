@@ -1,0 +1,1 @@
+include ':app', ':classtest', ':Contacts', ':Game2048', ':exam9_9', ':providerclient'
