@@ -212,7 +212,7 @@ public class MainActivity extends BaseActivity {
             Toast.makeText(this,"再次点击退出",Toast.LENGTH_SHORT).show();
             isExit=true;
         }else if (keyCode==KeyEvent.KEYCODE_BACK && isExit==true){
-            //获取第一次点击的时间
+            //获取第二次点击的时间
             l_secondClick =System.currentTimeMillis();
             if(l_secondClick - l_firstClick <1500){
                 finish();

@@ -19,7 +19,7 @@
         <activity android:name="com.example.activity.BaseActivity" />
         <activity android:name="com.example.activity.PhoneNumberActivity"></activity>
         <provider
-            android:authorities="com.example.contacts.provider"
+            android:authorities="com.example.contacts"
             android:exported="true"
             android:name="com.example.contentprovider.MyContentProvider"/>
     </application>
