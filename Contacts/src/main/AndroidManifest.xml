@@ -2,6 +2,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.main">
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <!--读取通讯录大全信息的权限-->
+    <permission
+        android:name="com.example.Contacts.permission.READ"
+        android:label="Read Pervider Permission"
+        android:protectionLevel="normal"/>
+    <!--读取phoneType表的权限-->
+    <permission
+        android:name="com.example.Contacts.permission.READ_PHONE_NUM"
+        android:label="Read Phone Num"
+        android:protectionLevel="normal"/>
+    <!--读取Catering表的权限-->
+    <permission
+        android:name="com.example.Contacts.permission.READ_PHONE_TYPE"
+        android:label="Read Phone Type"
+        android:protectionLevel="normal"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/icon"
@@ -21,7 +37,19 @@
         <provider
             android:authorities="com.example.contacts"
             android:exported="true"
-            android:name="com.example.contentprovider.MyContentProvider"/>
+            android:name="com.example.contentprovider.MyContentProvider"
+            >
+            <!--下边这一行应该写在上边Provider中-->
+            <!--android:readPermission="com.example.Contacts.permission.READ"-->
+            <path_permission
+                android:pathPrefix="/phoneType"
+                android:readPermission="com.example.Contacts.permission.READ_PHONE_TYPE"
+                />
+            <path_permission
+                android:pathPrefix="/catering"
+                android:readPermission="com.example.Contacts.permission.READ_PHONE_NUM"
+                />
+        </provider>
     </application>
 
 </manifest>

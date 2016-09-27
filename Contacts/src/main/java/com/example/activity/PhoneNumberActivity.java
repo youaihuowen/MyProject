@@ -1,12 +1,16 @@
 package com.example.activity;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.DialogPreference;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.adapter.PhoneNumAdapter;
 import com.example.entity.PhoneNumEntity;
@@ -35,6 +40,8 @@ public class PhoneNumberActivity extends BaseActivity {
     ListView lv_container;
     //加载旋转进度条的布局
     LinearLayout ll_loading;
+    //请求打电话权限的请求码
+    private final int CALL_PHONE = 0;
     @Override
     protected int setContent() {
         return R.layout.activity_phone_number;
@@ -82,6 +89,7 @@ public class PhoneNumberActivity extends BaseActivity {
         lv_container.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
                 //创建询问是否拨打电话的对话框
                 new AlertDialog.Builder(PhoneNumberActivity.this)
                         .setTitle("警告")
@@ -94,10 +102,16 @@ public class PhoneNumberActivity extends BaseActivity {
                                 new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                //拨打当前点击的电话号码
-                                Intent intent = new Intent("android.intent.action.CALL",
-                                        Uri.parse("tel:" + data.get(position).getPhoneNumber()));
-                                startActivity(intent);
+                                if(ContextCompat.checkSelfPermission(PhoneNumberActivity.this,
+                                        Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED){
+                                    //拨打当前点击的电话号码
+                                    Intent intent = new Intent("android.intent.action.CALL",
+                                            Uri.parse("tel:" + data.get(position).getPhoneNumber()));
+                                    startActivity(intent);
+                                }else{
+                                    Toast.makeText(PhoneNumberActivity.this,
+                                            "没有拨打电话的权限", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         })
                         .setNegativeButton("取消",null)
@@ -105,6 +119,13 @@ public class PhoneNumberActivity extends BaseActivity {
             }
         });
 
+    }
+
+    public void requestPermission(){
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) !=
+                PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, CALL_PHONE);
+        }
     }
 
     /**
@@ -131,6 +152,8 @@ public class PhoneNumberActivity extends BaseActivity {
             ll_loading.setVisibility(View.GONE);
             //设置listview的适配器
             lv_container.setAdapter(adapter);
+            //请求权限
+            requestPermission();
         }
     }
 }
