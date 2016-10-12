@@ -4,8 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -15,6 +19,7 @@ import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -31,8 +36,32 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
     private Bitmap erjihuancun;//二级缓存图片
     private int display_w;
     private int display_h;
+
+    private int score = 0;//分数
+    private int level = 1;//关卡数
+
+    private int interval = 50;//出敌机的时间间隔
+    private int speed = 3;//敌机的速度
+
     ArrayList<GameImage> list = new ArrayList<GameImage>();
     ArrayList<Zidan> bullets = new ArrayList<Zidan>();
+
+    int[][] pass = {
+            {1, 100, 23, 6},
+            {2, 200, 21, 7},
+            {3, 300, 19, 8},
+            {4, 400, 17, 9},
+            {5, 500, 15, 10},
+            {6, 600, 13, 11},
+            {7, 700, 11, 12},
+            {8, 800, 9, 13},
+            {9, 900, 7, 14},
+            {10, 1000, 5, 15}};
+
+    private SoundPool pool;//声音池
+    private int sound_bomb = 0;
+    private int sound_gameover = 0;
+    private int sound_shot = 0;
 
 
     public GameView(Context context) {
@@ -52,26 +81,79 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
         erjihuancun = Bitmap.createBitmap(display_w, display_h, Bitmap.Config.ARGB_8888);
         list.add(new BeiJingImage(bg));//先加入背景照片
         list.add(new FeiJiImage(my));//加入自己的飞机
-        list.add(new DiJiImage(enemy));
+        list.add(new DiJiImage(enemy, explosion));
+
+        //加载声音
+        pool = new SoundPool(10, AudioManager.STREAM_SYSTEM, 2);
+        sound_bomb = pool.load(getContext(), R.raw.bomb, 1);
+        sound_gameover = pool.load(getContext(), R.raw.gameover, 1);
+        sound_shot = pool.load(getContext(), R.raw.shot, 1);
     }
 
     private boolean state = false;
     private SurfaceHolder holder = null;
 
+
+    /**
+     * 暂停
+     */
+    private boolean stop_state = false;
+
+    public void stop() {
+        stop_state = true;
+    }
+
+    /**
+     * 取消暂停
+     */
+    public void start() {
+        stop_state = false;
+        mThread.interrupt();
+    }
+
+    /**
+     * 播放声音的线程
+     */
+    public class PlaySound extends Thread{
+        int id=0;
+        public PlaySound(int i){
+            this.id=i;
+        }
+        @Override
+        public void run() {
+            pool.play(id, 1, 1, 1, 0, 1);
+        }
+    }
+
     //绘画
     @Override
     public void run() {
         Paint p = new Paint();
+
+        Paint p_score = new Paint();
+        p_score.setColor(Color.YELLOW);
+        p_score.setTextSize(30);
+        p_score.setDither(true);
+        p_score.setAntiAlias(true);
+
         int diji_num = 0;//出敌机的计时
-        int bullet_num=0;
+        int bullet_num = 0;
         try {
             while (state) {
+                try {
+                    while (stop_state) {
+                        Thread.sleep(10000);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 Canvas c = new Canvas(erjihuancun);
                 //判断什么时候发射子弹
                 if (selectFeiji != null) {
-                    if (bullet_num==5){
+                    if (bullet_num == 7) {
                         bullets.add(new Zidan(selectFeiji, bullet));
-                        bullet_num=0;
+                        new PlaySound(sound_shot).start();
+                        bullet_num = 0;
                     }
                     bullet_num++;
                 }
@@ -81,20 +163,29 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
                     c.drawBitmap(image.getBitmap(), image.getX(), image.getY(), p);
                 }
 
-                for (Zidan image : bullets) {
+                for (Zidan image : (ArrayList<Zidan>) bullets.clone()) {
                     c.drawBitmap(image.getBitmap(), image.getX(), image.getY(), p);
                 }
-                //每当计数到50，出一架敌机
-                if (diji_num == 70) {
+
+                if (score >= pass[level - 1][1]) {
+                    interval = pass[level][2];
+                    speed = pass[level][3];
+                    score = score - pass[level - 1][1];
+                    level++;
+                }
+                c.drawText("分数:" + score, 10f, 50f, p_score);
+                c.drawText("关：" + level, 10f, 100f, p_score);
+
+                //每当计数到40，出一架敌机
+                if (diji_num >= interval) {
                     diji_num = 0;
-                    list.add(new DiJiImage(enemy));
+                    list.add(new DiJiImage(enemy, explosion));
                 }
                 diji_num++;
 
                 Canvas canvas = holder.lockCanvas();
                 canvas.drawBitmap(erjihuancun, 0, 0, p);
                 holder.unlockCanvasAndPost(canvas);
-                Thread.sleep(10);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,6 +197,8 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
         this.holder = holder;
     }
 
+    Thread mThread = new Thread(this);
+
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         //获取屏幕的宽和高
@@ -113,7 +206,8 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
         display_h = height;
         init();
         state = true;
-        new Thread(this).start();
+
+        mThread.start();
     }
 
     @Override
@@ -159,6 +253,7 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
     }
 
 
+
     private interface GameImage {
         public Bitmap getBitmap();
 
@@ -195,8 +290,8 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
                     new Rect(0, 0, bg.getWidth(), bg.getHeight()),
                     new Rect(0, -display_h + height, display_w, height),
                     p);
-            height++;
-            if (height == display_h) {
+            height += 3;
+            if (height >= display_h) {
                 height = 0;
             }
             return newBitmap;
@@ -294,11 +389,16 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
     private class DiJiImage implements GameImage {
         Bitmap enemy;
         List<Bitmap> bitmaps = new ArrayList<Bitmap>();
+        List<Bitmap> bitmaps_explosion = new ArrayList<Bitmap>();
         private int x;
         private int y;
+        private int width;
+        private int height;
+        private boolean alive = true;//敌机是否活着
 
-        public DiJiImage(Bitmap enemy) {
+        public DiJiImage(Bitmap enemy, Bitmap explosion) {
             this.enemy = enemy;
+            //拆分敌机的图片
             bitmaps.add(Bitmap.createBitmap(enemy,
                     0, 0, enemy.getWidth() / 4, enemy.getHeight()));
             bitmaps.add(Bitmap.createBitmap(enemy,
@@ -307,10 +407,32 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
                     (enemy.getWidth() / 4) * 2, 0, enemy.getWidth() / 4, enemy.getHeight()));
             bitmaps.add(Bitmap.createBitmap(enemy,
                     (enemy.getWidth() / 4) * 3, 0, enemy.getWidth() / 4, enemy.getHeight()));
+            //拆分爆炸的图片
+            bitmaps_explosion.add(Bitmap.createBitmap(explosion,
+                    0, 0, explosion.getWidth() / 4, explosion.getHeight() / 2));
+            bitmaps_explosion.add(Bitmap.createBitmap(explosion,
+                    (explosion.getWidth() / 4) * 1, 0, explosion.getWidth() / 4, explosion.getHeight() / 2));
+            bitmaps_explosion.add(Bitmap.createBitmap(explosion,
+                    (explosion.getWidth() / 4) * 2, 0, explosion.getWidth() / 4, explosion.getHeight() / 2));
+            bitmaps_explosion.add(Bitmap.createBitmap(explosion,
+                    (explosion.getWidth() / 4) * 3, 0, explosion.getWidth() / 4, explosion.getHeight() / 2));
+
+            bitmaps_explosion.add(Bitmap.createBitmap(explosion,
+                    0, (explosion.getHeight() / 2), explosion.getWidth() / 4, explosion.getHeight() / 2));
+            bitmaps_explosion.add(Bitmap.createBitmap(explosion,
+                    (explosion.getWidth() / 4) * 1, (explosion.getHeight() / 2), explosion.getWidth() / 4, explosion.getHeight() / 2));
+            bitmaps_explosion.add(Bitmap.createBitmap(explosion,
+                    (explosion.getWidth() / 4) * 2, (explosion.getHeight() / 2), explosion.getWidth() / 4, explosion.getHeight() / 2));
+            bitmaps_explosion.add(Bitmap.createBitmap(explosion,
+                    (explosion.getWidth() / 4) * 3, (explosion.getHeight() / 2), explosion.getWidth() / 4, explosion.getHeight() / 2));
+
 
             y = -enemy.getHeight();
             Random ran = new Random();
             x = ran.nextInt(display_w - enemy.getWidth() / 4);
+
+            width = enemy.getWidth() / 4;
+            height = enemy.getHeight();
         }
 
         private int index = 0;//敌人飞机图片的下标
@@ -319,19 +441,47 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
         @Override
         public Bitmap getBitmap() {
             Bitmap bitmap = bitmaps.get(index);
-            if (num == 10) {
+            if (num == 5) {
                 index++;
+                if (index == 8 && !alive) {
+                    list.remove(this);
+                }
                 if (index == bitmaps.size()) {
                     index = 0;
                 }
                 num = 0;
             }
             num++;
-            y += 2;
+            y += speed;
             if (y > display_h) {
                 list.remove(this);
             }
+            damage(bullets);
             return bitmap;
+        }
+
+        /**
+         * 敌机被击中
+         *
+         * @param bullets 子弹
+         */
+        public void damage(ArrayList<Zidan> bullets) {
+            if (alive) {
+                for (Zidan bullet : bullets) {
+                    if (bullet.getX() > getX()
+                            && bullet.getY() > getY()
+                            && bullet.getX() < getX() + width
+                            && bullet.getY() < getY() + height) {
+                        bullets.remove(bullet);
+                        alive = false;
+                        score += 10;
+                        new PlaySound(sound_bomb).start();
+                        bitmaps = bitmaps_explosion;
+                        break;
+                    }
+                }
+            }
+
         }
 
         @Override
@@ -363,8 +513,8 @@ public class GameView extends SurfaceView implements Runnable, SurfaceHolder.Cal
 
         @Override
         public Bitmap getBitmap() {
-            y -= 10;
-            if (y<-10){
+            y -= 25;
+            if (y < -bullet.getHeight()) {
                 bullets.remove(this);
             }
             return bullet;
