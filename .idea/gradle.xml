@@ -5,29 +5,23 @@
       <GradleProjectSettings>
         <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="F:\Android_Studio\gradle\gradle-2.14.1" />
+        <option name="gradleHome" value="F:\Android Studio\gradle\gradle-2.14.1" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Contacts" />
-            <option value="$PROJECT_DIR$/Game2048" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/classtest" />
+            <option value="$PROJECT_DIR$/classtest_activity" />
+            <option value="$PROJECT_DIR$/classtest_fragment" />
+            <option value="$PROJECT_DIR$/classtest_intent" />
+            <option value="$PROJECT_DIR$/exam9_29" />
             <option value="$PROJECT_DIR$/exam9_9" />
+            <option value="$PROJECT_DIR$/mycontactscontract" />
             <option value="$PROJECT_DIR$/providerclient" />
           </set>
         </option>
-        <option name="myModules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/Contacts" />
-            <option value="$PROJECT_DIR$/Game2048" />
-            <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/classtest" />
-            <option value="$PROJECT_DIR$/exam9_9" />
-            <option value="$PROJECT_DIR$/providerclient" />
-          </set>
-        </option>
+        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

@@ -16,7 +16,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".FirstActivity" />
-        <activity android:name=".SecondActivity"></activity>
+        <activity android:name=".SecondActivity" />
+        <activity android:name=".AActivity" />
+        <activity android:name=".BActivity" />
+        <activity android:name=".BaseActivity" />
+        <activity android:name="com.example.exam9_29.UpdateActivity"></activity>
     </application>
 
 </manifest>

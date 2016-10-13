@@ -3,11 +3,15 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Contacts/Contacts.iml" filepath="$PROJECT_DIR$/Contacts/Contacts.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Game2048/Game2048.iml" filepath="$PROJECT_DIR$/Game2048/Game2048.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyApplication.iml" filepath="$PROJECT_DIR$/MyApplication.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/classtest/classtest.iml" filepath="$PROJECT_DIR$/classtest/classtest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/classtest_activity/classtest_activity.iml" filepath="$PROJECT_DIR$/classtest_activity/classtest_activity.iml" />
+      <module fileurl="file://$PROJECT_DIR$/classtest_fragment/classtest_fragment.iml" filepath="$PROJECT_DIR$/classtest_fragment/classtest_fragment.iml" />
+      <module fileurl="file://$PROJECT_DIR$/classtest_intent/classtest_intent.iml" filepath="$PROJECT_DIR$/classtest_intent/classtest_intent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/exam9_29/exam9_29.iml" filepath="$PROJECT_DIR$/exam9_29/exam9_29.iml" />
       <module fileurl="file://$PROJECT_DIR$/exam9_9/exam9_9.iml" filepath="$PROJECT_DIR$/exam9_9/exam9_9.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mycontactscontract/mycontactscontract.iml" filepath="$PROJECT_DIR$/mycontactscontract/mycontactscontract.iml" />
       <module fileurl="file://$PROJECT_DIR$/providerclient/providerclient.iml" filepath="$PROJECT_DIR$/providerclient/providerclient.iml" />
     </modules>
   </component>

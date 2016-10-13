@@ -16,4 +16,19 @@
        android:textAllCaps="false"
        android:id="@+id/btn_start_forResult"
        android:text="startActivityForResult"/>
+   <Button
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_below="@+id/btn_start_forResult"
+       android:textAllCaps="false"
+       android:id="@+id/btn_start_finishActivity"
+       android:text="finish Activity"/>
+
+   <Button
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_below="@+id/btn_start_finishActivity"
+       android:textAllCaps="false"
+       android:id="@+id/btn_start_oneKeyExit"
+       android:text="One Key Exit"/>
 </RelativeLayout>

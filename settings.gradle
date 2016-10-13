@@ -1,1 +1,1 @@
-include ':app', ':classtest', ':Contacts', ':Game2048', ':exam9_9', ':providerclient'
+include ':app', ':classtest', ':Contacts', ':exam9_9', ':providerclient', ':mycontactscontract', ':classtest_intent', ':classtest_activity', ':exam9_29', ':classtest_fragment'

@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">Robot</string>
-    <string-array name="welcome">
-        <item>主人，奴婢在此等候多时了</item>
-        <item>亲爱的，想死我了</item>
-        <item>欢迎回来，亲爱的主人</item>
-        <item>主人您好，我是小灵</item>
-    </string-array>
-</resources>

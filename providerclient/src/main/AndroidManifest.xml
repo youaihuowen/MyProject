@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.providerclient">
-
+    <!--授予应用读取通讯大全内容的权限（自定义的权限）-->
+    <!--<uses-permission android:name="com.example.Contacts.permission.READ"/>-->
+    <!--授予该应用读取phoneType表的权限-->
+    <uses-permission android:name="com.example.Contacts.permission.READ_PHONE_TYPE"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

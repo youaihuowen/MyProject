@@ -28,4 +28,15 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/btn_second_finish" />
+
+    <Button
+        android:text="intent访问contentProvider"
+        android:textAllCaps="false"
+        android:onClick="contentProvidetByIntent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:id="@+id/button"
+        android:layout_below="@+id/btn_second_finish"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
